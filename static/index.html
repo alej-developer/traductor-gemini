@@ -3,125 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traductor Gemini Enterprise | Plataforma Lingüística y Análisis Botánico</title>
-  <meta name="description" content="Plataforma de traducción multilingüe de alta precisión, análisis pedagógico y experiencia inmersiva en tiempo real con Google Gemini AI y Three.js.">
+  <title>Traductor del Bosque | Cuaderno Sereno de Lenguas y Literatura</title>
+  <meta name="description" content="Plataforma de traducción serena, análisis de vocabulario y cuaderno lingüístico en un entorno natural y sosegado.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Motores de Renderizado 3D y Orquestación de Animación (One Page Love Stack) -->
+  <!-- Motores de Renderizado 3D y Física Natural -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
-<body class="dark-theme">
-  <!-- Lienzo 3D Three.js: Bosque profundo, niebla volumétrica y hojas interactivas -->
+<body class="natural-theme">
+  <!-- Paisaje 3D Natural: Coníferas, niebla de valle, luz solar suave y hojas otoñales -->
   <canvas id="forestCanvas" class="forest-webgl-canvas"></canvas>
 
-  <!-- Filtro de Grano de Película Cinematográfico y Viñeta -->
+  <!-- Atmósfera Visual: Grano de papel fotográfico y viñeta suave -->
   <div class="film-grain"></div>
   <div class="vignette-overlay"></div>
   <div id="ambientSpotlight" class="ambient-spotlight"></div>
 
-  <!-- Cabecera Editorial y Barra de Rendimiento HUD -->
+  <!-- Cabecera Serena y Editorial -->
   <header class="app-header">
     <div class="brand-container">
-      <div class="logo-badge" title="Núcleo Botánico y Lingüístico">
-        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2L4 9h3v13h10V9h3L12 2z"></path>
-          <path d="M12 12v10"></path>
+      <div class="logo-badge" title="Cuaderno del Bosque">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 2C7 6 5 11 5 16a7 7 0 0 0 14 0c0-5-2-10-7-14z"></path>
+          <path d="M12 8v11"></path>
+          <path d="M9.5 12.5l2.5 2.5 2.5-2.5"></path>
         </svg>
       </div>
       <div>
-        <h1 class="brand-title">TRADUCTOR <span class="brand-highlight">GEMINI</span></h1>
-        <p class="brand-subtitle">PLATAFORMA LINGÜÍSTICA &bull; BOSQUE SILVESTRE &bull; NÚCLEO EXPERIMENTAL</p>
+        <h1 class="brand-title">Traductor del <span class="brand-highlight">Bosque</span></h1>
+        <p class="brand-subtitle">Cuaderno sereno de traducción y estudio del lenguaje natural</p>
       </div>
     </div>
 
     <div class="header-actions">
-      <!-- HUD de telemetría -->
-      <div class="hud-pill" title="Coordenadas del bioma simulado">
-        <span class="hud-label">BIOMA</span>
-        <span class="hud-value">PINUS SYLVESTRIS</span>
-      </div>
-
+      <!-- Estado de conexión discreto -->
       <div id="engineStatusBadge" class="status-pill status-loading">
         <span class="status-dot"></span>
-        <span id="engineStatusText">Detectando motor...</span>
+        <span id="engineStatusText">Conectando...</span>
       </div>
 
-      <!-- Conmutador de Sonido Ambiental Procedural -->
-      <button id="ambientSoundBtn" class="btn-ghost sound-toggle-btn" title="Activar / Desactivar sonido ambiental procedural de bosque">
-        <svg class="sound-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+      <!-- Sonido del bosque (Web Audio procedural relajante) -->
+      <button id="ambientSoundBtn" class="btn-ghost sound-toggle-btn" title="Escuchar el murmullo del viento y las hojas">
+        <svg class="sound-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
         </svg>
-        <span id="soundBtnText">Ambiente</span>
+        <span id="soundBtnText">Sonido del bosque</span>
       </button>
 
-      <button id="historyDrawerBtn" class="btn-ghost" title="Ver Historial de Traducciones">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- Historial de lectura -->
+      <button id="historyDrawerBtn" class="btn-ghost" title="Consultar lecturas anteriores">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
         <span>Historial</span>
       </button>
 
-      <a href="/docs" target="_blank" class="btn-ghost" title="Documentación OpenAPI / Swagger">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <polyline points="10 9 9 9 8 9"></polyline>
+      <!-- Enlace a la documentación -->
+      <a href="/docs" target="_blank" class="btn-ghost" title="Documentación de la API">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
         </svg>
-        <span>Swagger API</span>
+        <span>Documentación</span>
       </a>
     </div>
   </header>
 
   <main class="main-container">
-    <!-- Barra de configuración de estilo y modo -->
+    <!-- Barra de opciones literarias -->
     <section class="toolbar-card">
       <div class="toolbar-left">
         <label for="toneSelect" class="toolbar-label">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
           </svg>
-          TONO:
+          Tono literario:
         </label>
         <select id="toneSelect" class="custom-select">
-          <option value="standard" selected>Estándar (Equilibrado)</option>
-          <option value="literary">Literario / Disección Poética</option>
-          <option value="formal">Formal / Negocios</option>
-          <option value="casual">Coloquial / Cotidiano</option>
-          <option value="academic">Académico / Científico</option>
+          <option value="standard" selected>Equilibrado y natural</option>
+          <option value="literary">Literario y poético</option>
+          <option value="formal">Elegante y formal</option>
+          <option value="casual">Cotidiano y cercano</option>
+          <option value="academic">Científico y botánico</option>
         </select>
       </div>
 
       <div class="toolbar-right">
-        <label class="toggle-container" title="Desglosa vocabulario con pronunciación, categoría y nivel MCER">
+        <label class="toggle-container" title="Extrae palabras clave, fonética y notas culturales">
           <input type="checkbox" id="studyModeToggle" checked>
           <span class="toggle-switch"></span>
-          <span class="toggle-label">Modo Estudio y Vocabulario IA</span>
+          <span class="toggle-label">Cuaderno de vocabulario y notas</span>
         </label>
       </div>
     </section>
 
-    <!-- Panel Dual de Traducción (Vidrio Obsidiana Esmerilado) -->
+    <!-- Cuadrícula Dual de Traducción (Superficies de Musgo y Papel Cálido) -->
     <section class="translation-grid">
-      <!-- Tarjeta Origen -->
+      <!-- Tarjeta de Texto Original -->
       <article class="editor-card source-card">
         <div class="card-header">
           <div class="language-selector-wrapper">
             <select id="sourceLangSelect" class="lang-select">
-              <option value="auto" selected>Detectar Idioma Automático</option>
+              <option value="auto" selected>Detectar idioma automáticamente</option>
             </select>
           </div>
           <button id="clearSourceBtn" class="icon-btn" title="Limpiar texto">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -131,7 +126,7 @@
         <div class="card-body">
           <textarea
             id="sourceTextInput"
-            placeholder="Escribe o pega aquí el fragmento a traducir o diseccionar..."
+            placeholder="Escribe o vierte aquí el fragmento que deseas traducir o examinar..."
             rows="7"
             maxlength="10000"
           ></textarea>
@@ -140,18 +135,18 @@
         <div class="card-footer">
           <span id="charCount" class="counter-text">0 / 10,000 caracteres</span>
           <div class="quick-samples">
-            <span class="sample-label">Prueba rápida:</span>
-            <button class="sample-btn" data-text="The ephemeral beauty of autumnal leaves reminds us of impermanence." data-target="es">Literatura</button>
+            <span class="sample-label">Lecturas de prueba:</span>
+            <button class="sample-btn" data-text="The ephemeral beauty of autumnal leaves reminds us of impermanence." data-target="es">Hojas de otoño</button>
             <button class="sample-btn" data-text="Kissa istuu pöydällä ja katselee ikkunasta ulos." data-target="es">Finés</button>
             <button class="sample-btn" data-text="La perseveranza è il segreto per raggiungere mete inaspettate." data-target="en">Italiano</button>
           </div>
         </div>
       </article>
 
-      <!-- Botón de intercambio central atlético -->
+      <!-- Botón de acción central -->
       <div class="swap-divider">
-        <button id="translateActionBtn" class="btn-primary" title="Traducir ahora (Ctrl + Enter)">
-          <span class="btn-text">Traducir</span>
+        <button id="translateActionBtn" class="btn-primary" title="Traducir fragmento (Ctrl + Enter)">
+          <span class="btn-text">Traducir fragmento</span>
           <svg class="arrow-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
@@ -159,12 +154,12 @@
         </button>
       </div>
 
-      <!-- Tarjeta Destino -->
+      <!-- Tarjeta de Traducción y Cuaderno -->
       <article class="editor-card target-card">
         <div class="card-header">
           <div class="language-selector-wrapper">
             <select id="targetLangSelect" class="lang-select">
-              <!-- Se puebla dinámicamente con idiomas y banderas -->
+              <!-- Se puebla con el catálogo de lenguas -->
             </select>
           </div>
 
@@ -173,15 +168,15 @@
               Origen: <strong id="detectedSrcName"></strong>
             </span>
             <span id="latencyBadge" class="meta-tag hidden">0ms</span>
-            <span id="providerBadge" class="meta-tag hidden">Gemini AI</span>
-            <button id="listenAudioBtn" class="icon-btn" title="Escuchar pronunciación (TTS)" disabled>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <span id="providerBadge" class="meta-tag hidden">Traductor</span>
+            <button id="listenAudioBtn" class="icon-btn" title="Escuchar pronunciación natural" disabled>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
               </svg>
             </button>
             <button id="copyResultBtn" class="icon-btn" title="Copiar traducción" disabled>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
               </svg>
@@ -191,76 +186,75 @@
 
         <div class="card-body target-body">
           <div id="targetPlaceholder" class="placeholder-box">
-            <p>La traducción y desglose botánico aparecerán aquí.</p>
-            <small>Presiona <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para procesar con aceleración IA.</small>
+            <p>Las palabras traducidas y el vocabulario florecerán aquí.</p>
+            <small>Pulsa <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para traducir con calma.</small>
           </div>
 
           <div id="targetContent" class="translated-result hidden"></div>
 
-          <!-- Spinner de carga -->
+          <!-- Indicador de espera natural -->
           <div id="loadingOverlay" class="loading-overlay hidden">
             <div class="spinner"></div>
-            <p id="loadingMsg">Procesando traducción lingüística...</p>
+            <p id="loadingMsg">Traduciendo con cuidado y examinando el vocabulario...</p>
           </div>
         </div>
 
         <div class="card-footer">
-          <span class="sample-label">Exportación Académica:</span>
+          <span class="sample-label">Guardar cuaderno:</span>
           <div class="export-actions">
-            <button id="exportAnkiBtn" class="sample-btn" title="Descargar como mazo Anki TSV">Mazo Anki</button>
-            <button id="exportMarkdownBtn" class="sample-btn" title="Descargar cuaderno en Markdown">Cuaderno .MD</button>
+            <button id="exportAnkiBtn" class="sample-btn" title="Descargar tarjetas de memoria para Anki">Mazo Anki (.tsv)</button>
+            <button id="exportMarkdownBtn" class="sample-btn" title="Descargar apuntes en formato Markdown">Cuaderno (.md)</button>
           </div>
         </div>
       </article>
     </section>
 
-    <!-- Sección de Análisis de Vocabulario y Gramática -->
+    <!-- Cuaderno de Vocabulario y Notas Lingüísticas -->
     <section id="analysisSection" class="analysis-section hidden">
       <div class="section-title-bar">
         <div>
           <h2 class="section-heading">
-            <span>Disección Lingüística &bull; Modo Estudio</span>
-            <span class="sparkle-badge">IA GEMINI</span>
+            <span>Cuaderno de Vocabulario y Estudio del Lenguaje</span>
           </h2>
-          <p class="section-caption">Desglose de unidades léxicas, fonética IPA, equivalencias semánticas y patrones estructurales.</p>
+          <p class="section-caption">Desglose de palabras clave, pronunciación fonética y observaciones gramaticales o culturales.</p>
         </div>
       </div>
 
       <div class="analysis-container">
-        <!-- Vocabulario Extraído -->
+        <!-- Vocabulario Relevante -->
         <div class="vocab-column">
-          <h3 class="subsection-title">Vocabulario Relevante</h3>
+          <h3 class="subsection-title">Vocabulario y Acepciones</h3>
           <div id="vocabCardsGrid" class="vocab-grid"></div>
         </div>
 
         <!-- Notas Gramaticales & Culturales -->
         <div class="grammar-column">
-          <h3 class="subsection-title">Notas Gramaticales y Culturales</h3>
+          <h3 class="subsection-title">Notas Gramaticales y de Estilo</h3>
           <div id="grammarNotesList" class="grammar-list"></div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Drawer Lateral de Historial -->
+  <!-- Cajón Lateral de Historial -->
   <aside id="historyDrawer" class="history-drawer">
     <div class="drawer-header">
       <div class="drawer-title-group">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        <h3>Historial de Sesión</h3>
+        <h3>Historial de Lecturas</h3>
       </div>
       <button id="closeDrawerBtn" class="icon-btn">&times;</button>
     </div>
 
     <div class="drawer-search">
-      <input type="text" id="historySearchInput" placeholder="Buscar en traducciones pasadas...">
+      <input type="text" id="historySearchInput" placeholder="Buscar en fragmentos anteriores...">
     </div>
 
     <div id="historyListContainer" class="drawer-list">
-      <div class="empty-history">Cargando historial...</div>
+      <div class="empty-history">Cargando lecturas...</div>
     </div>
 
     <div class="drawer-footer">
@@ -275,10 +269,10 @@
 
   <div id="drawerBackdrop" class="drawer-backdrop"></div>
 
-  <!-- Toast de Notificaciones -->
+  <!-- Notificaciones Suaves -->
   <div id="toastNotification" class="toast-notification"></div>
 
-  <!-- Scripts de la Aplicación -->
+  <!-- Scripts -->
   <script src="ambient-audio.js"></script>
   <script src="forest-3d.js"></script>
   <script src="app.js"></script>

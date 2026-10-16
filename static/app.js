@@ -101,15 +101,15 @@ async function checkEngineHealth() {
       const data = await res.json();
       const geminiOnline = data.providers?.gemini?.available;
       if (geminiOnline) {
-        dom.engineStatusText.textContent = `Google Gemini Activo (${data.providers.gemini.model})`;
+        dom.engineStatusText.textContent = 'Conexión activa';
         dom.engineStatusBadge.className = 'status-pill status-online';
       } else {
-        dom.engineStatusText.textContent = 'Deep-Translator (Modo Fallback)';
+        dom.engineStatusText.textContent = 'Modo alternativo';
         dom.engineStatusBadge.className = 'status-pill status-fallback';
       }
     }
   } catch (err) {
-    dom.engineStatusText.textContent = 'Error de conexión';
+    dom.engineStatusText.textContent = 'Sin conexión';
     dom.engineStatusBadge.className = 'status-pill status-fallback';
   }
 }
@@ -158,8 +158,8 @@ async function performTranslation() {
 
   dom.loadingOverlay.classList.remove('hidden');
   dom.loadingMsg.textContent = dom.studyModeToggle.checked
-    ? 'Analizando con IA lingüística y extrayendo vocabulario...'
-    : 'Traduciendo texto...';
+    ? 'Traduciendo con cuidado y examinando el vocabulario...'
+    : 'Traduciendo el fragmento...';
 
   const payload = {
     text: text,
@@ -216,8 +216,8 @@ function renderTranslationResult(data) {
 
   dom.providerBadge.classList.remove('hidden');
   dom.providerBadge.textContent = data.cached
-    ? 'Caché'
-    : (data.provider_used === 'gemini' ? 'Gemini AI' : 'Deep-Translator');
+    ? 'Memoria'
+    : 'Traducción directa';
 
   // 4. Idioma detectado
   if (data.detected_source_lang && data.detected_source_lang !== 'auto') {
@@ -451,8 +451,8 @@ if (dom.ambientSoundBtn) {
     if (window.forestAudio) {
       const isPlaying = window.forestAudio.toggle();
       dom.ambientSoundBtn.classList.toggle('active', isPlaying);
-      dom.soundBtnText.textContent = isPlaying ? 'Ambiente: Activo' : 'Ambiente';
-      showToast(isPlaying ? 'Sonido de bosque activado' : 'Sonido ambiental silenciado');
+      dom.soundBtnText.textContent = isPlaying ? 'Sonido activo' : 'Sonido del bosque';
+      showToast(isPlaying ? 'Murmullo del bosque activado' : 'Sonido silenciado');
     }
   });
 }

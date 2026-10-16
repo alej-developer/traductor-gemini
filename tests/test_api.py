@@ -82,4 +82,4 @@ async def test_static_index_serves():
     async with AsyncClient(transport=transport, base_url="http://test") as client:
         response = await client.get("/")
         assert response.status_code == 200
-        assert "Traductor Gemini Enterprise" in response.text
+        assert "Traductor" in response.text

@@ -1,59 +1,58 @@
 /**
- * Traductor Gemini Enterprise - 3D Forest Scene Engine
- * Arquitectura Three.js para renderizado de bosque profundo, niebla volumétrica,
- * haces de luz crepusculares (god rays), luciérnagas y hojas 3D interactivas.
- * Inspirado en la estética de One Page Love (Ivy Engine, Ambicular, Peaceful Panda).
+ * Traductor del Bosque - Escena 3D Natural y Viva
+ * Renderizado orgánico mediante Three.js: niebla de montaña volumétrica,
+ * siluetas de coníferas estratificadas, ramas colgantes con balanceo del viento,
+ * haces de luz natural crepusculares, luciérnagas doradas y hojas otoñales con aerodinámica real.
+ * Diseñado con estética pictórica de documental botánico (sin polígonos sintéticos ni estilo robótico).
  */
 
 (function () {
   'use strict';
 
-  // Si Three.js no está disponible en la ventana, salimos silenciosamente
   if (typeof THREE === 'undefined') {
-    console.warn('Three.js no detectado. Modo visual 3D omitido.');
     return;
   }
 
   const canvas = document.getElementById('forestCanvas');
   if (!canvas) return;
 
-  // Parámetros y Estado del Escenario
   const config = {
-    fogColor: 0x070c09,
-    treeCount: 52,
-    sporeCount: 140,
-    leafCount: 38,
-    mistLayerCount: 5,
+    skyColor: 0x09120c,
+    fogColor: 0x0c1710,
+    treeCount: 65,
+    fireflyCount: 120,
+    leafCount: 42,
+    mistLayerCount: 7,
   };
 
   let scene, camera, renderer;
   let mouseX = 0, mouseY = 0;
   let targetCamX = 0, targetCamY = 0;
-  let clock = new THREE.Clock();
+  const clock = new THREE.Clock();
   let windStrength = 1.0;
   let targetWindStrength = 1.0;
 
-  // Grupos y Elementos 3D
-  let treesGroup = new THREE.Group();
-  let mistGroup = new THREE.Group();
-  let lightRaysGroup = new THREE.Group();
-  let sporesMesh;
-  let leaves = [];
+  const forestGroup = new THREE.Group();
+  const canopyForeground = new THREE.Group();
+  const mistGroup = new THREE.Group();
+  const lightRaysGroup = new THREE.Group();
+  let firefliesMesh;
+  const leaves = [];
 
   /**
-   * Genera textura procedural en canvas para niebla y partículas
+   * Genera textura procedural de vapor orgánico o destello suave
    */
-  function createSoftRadialTexture(colorHex, size = 128) {
+  function createOrganicSoftTexture(colorRgba, size = 256) {
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = size;
     tempCanvas.height = size;
     const ctx = tempCanvas.getContext('2d');
 
     const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-    grad.addColorStop(0, colorHex);
-    grad.addColorStop(0.3, colorHex.replace('1)', '0.5)'));
-    grad.addColorStop(0.7, colorHex.replace('1)', '0.1)'));
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    grad.addColorStop(0, colorRgba);
+    grad.addColorStop(0.25, colorRgba.replace(/[\d\.]+\)$/, '0.45)'));
+    grad.addColorStop(0.65, colorRgba.replace(/[\d\.]+\)$/, '0.12)'));
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
 
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, size, size);
@@ -63,15 +62,12 @@
     return texture;
   }
 
-  /**
-   * Inicialización del renderizador y la escena 3D
-   */
   function init() {
     scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(config.fogColor, 0.0022);
+    scene.fog = new THREE.FogExp2(config.fogColor, 0.0028);
 
-    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.5, 600);
-    camera.position.set(0, 12, 50);
+    camera = new THREE.PerspectiveCamera(52, window.innerWidth / window.innerHeight, 0.5, 500);
+    camera.position.set(0, 10, 48);
 
     renderer = new THREE.WebGLRenderer({
       canvas: canvas,
@@ -81,28 +77,29 @@
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(config.fogColor, 0.95);
+    renderer.setClearColor(config.skyColor, 1);
 
-    // Luces
-    const ambientLight = new THREE.AmbientLight(0x13261a, 1.4);
+    // Iluminación natural: luz suave de cielo y sol filtrado
+    const ambientLight = new THREE.AmbientLight(0x192d20, 1.6);
     scene.add(ambientLight);
 
-    const moonLight = new THREE.DirectionalLight(0xdcf0e2, 1.1);
-    moonLight.position.set(-60, 90, 40);
-    scene.add(moonLight);
+    const sunBeam = new THREE.DirectionalLight(0xf4ebd9, 1.4);
+    sunBeam.position.set(-50, 80, 30);
+    scene.add(sunBeam);
 
-    const forestGlow = new THREE.PointLight(0x52b788, 1.5, 120);
-    forestGlow.position.set(0, 15, -10);
-    scene.add(forestGlow);
+    const warmGroundBounce = new THREE.PointLight(0xbfa57d, 1.0, 90);
+    warmGroundBounce.position.set(0, 8, -5);
+    scene.add(warmGroundBounce);
 
-    // Construcción de capas del bosque
-    buildTerrainAndTrees();
-    buildLightRays();
-    buildVolumetricMist();
-    buildBioluminescentSpores();
+    // Construcción del paisaje natural
+    buildMountainRidges();
+    buildOrganicForest();
+    buildForegroundCanopy();
+    buildVolumetricSunbeams();
+    buildAtmosphericMist();
+    buildFireflies();
     buildFallingLeaves();
 
-    // Eventos de entrada
     window.addEventListener('resize', onWindowResize, false);
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
@@ -111,190 +108,246 @@
   }
 
   /**
-   * Generación procedural de árboles de pino con varios niveles de copa
+   * Crestas montañosas lejanas con degradado aéreo
    */
-  function buildTerrainAndTrees() {
-    scene.add(treesGroup);
+  function buildMountainRidges() {
+    const ridgeMat = new THREE.MeshBasicMaterial({
+      color: 0x070e0a,
+      transparent: true,
+      opacity: 0.85,
+    });
 
-    // Geometrías reutilizables para optimización Draco / draw calls
-    const trunkGeo = new THREE.CylinderGeometry(0.4, 0.7, 10, 5);
-    const cone1Geo = new THREE.ConeGeometry(5.5, 9, 6);
-    const cone2Geo = new THREE.ConeGeometry(4.2, 7.5, 6);
-    const cone3Geo = new THREE.ConeGeometry(2.8, 6, 6);
+    for (let r = 0; r < 3; r++) {
+      const shape = new THREE.Shape();
+      shape.moveTo(-300, -30);
+      for (let x = -300; x <= 300; x += 30) {
+        const h = Math.sin(x * 0.015 + r * 1.8) * 16 + Math.cos(x * 0.03) * 8 + (2 - r) * 14;
+        shape.lineTo(x, h);
+      }
+      shape.lineTo(300, -30);
+      shape.closePath();
 
-    const trunkMat = new THREE.MeshLambertMaterial({ color: 0x181410 });
-    const pineColors = [0x0e2417, 0x143521, 0x1b432a, 0x225535, 0x193b26];
-
-    for (let i = 0; i < config.treeCount; i++) {
-      const tree = new THREE.Group();
-
-      // Posición en abanico con profundidad de -60 a -320
-      const x = (Math.random() - 0.5) * 360;
-      const z = -60 - Math.random() * 260;
-      const scale = 0.75 + Math.random() * 0.9;
-      const y = -14 + Math.sin(x * 0.02) * 5;
-
-      const folColor = pineColors[Math.floor(Math.random() * pineColors.length)];
-      const folMat = new THREE.MeshLambertMaterial({
-        color: folColor,
-        flatShading: true,
-      });
-
-      // Tronco
-      const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-      trunk.position.y = 5;
-      tree.add(trunk);
-
-      // Copas escalonadas
-      const tier1 = new THREE.Mesh(cone1Geo, folMat);
-      tier1.position.y = 10;
-      tree.add(tier1);
-
-      const tier2 = new THREE.Mesh(cone2Geo, folMat);
-      tier2.position.y = 14.5;
-      tree.add(tier2);
-
-      const tier3 = new THREE.Mesh(cone3Geo, folMat);
-      tier3.position.y = 18.5;
-      tree.add(tier3);
-
-      tree.position.set(x, y, z);
-      tree.scale.set(scale, scale, scale);
-      tree.rotation.y = Math.random() * Math.PI * 2;
-
-      treesGroup.add(tree);
+      const geo = new THREE.ShapeGeometry(shape);
+      const mesh = new THREE.Mesh(geo, ridgeMat);
+      mesh.position.set(0, 5 + r * 6, -220 - r * 60);
+      scene.add(mesh);
     }
   }
 
   /**
-   * Haces de luz volumétrica (God Rays) inclinados
+   * Bosque orgánico de abetos y coníferas con copas estratificadas
    */
-  function buildLightRays() {
-    scene.add(lightRaysGroup);
+  function buildOrganicForest() {
+    scene.add(forestGroup);
 
-    const rayTexture = createSoftRadialTexture('rgba(235, 245, 225, 1)', 256);
-    const rayMat = new THREE.MeshBasicMaterial({
-      map: rayTexture,
+    const trunkGeo = new THREE.CylinderGeometry(0.3, 0.65, 14, 6);
+    const trunkMat = new THREE.MeshLambertMaterial({ color: 0x14100c });
+
+    const foliageColors = [
+      0x0f2316, 0x142c1c, 0x193724, 0x1f422c, 0x173421, 0x244c33
+    ];
+
+    for (let i = 0; i < config.treeCount; i++) {
+      const tree = new THREE.Group();
+
+      const x = (Math.random() - 0.5) * 340;
+      const z = -45 - Math.random() * 210;
+      const scale = 0.7 + Math.random() * 0.85;
+      const y = -12 + Math.sin(x * 0.02) * 4;
+
+      // Tronco
+      const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+      trunk.position.y = 7;
+      tree.add(trunk);
+
+      // Follaje orgánico en capas escalonadas con pequeñas variaciones
+      const baseColor = foliageColors[Math.floor(Math.random() * foliageColors.length)];
+      const folMat = new THREE.MeshLambertMaterial({
+        color: baseColor,
+        flatShading: true,
+      });
+
+      const tiers = 4 + Math.floor(Math.random() * 2);
+      for (let t = 0; t < tiers; t++) {
+        const radius = 5.2 * (1 - t * 0.16);
+        const height = 5.5 - t * 0.5;
+        const coneGeo = new THREE.ConeGeometry(radius, height, 7);
+        const cone = new THREE.Mesh(coneGeo, folMat);
+        cone.position.y = 8 + t * 3.6;
+        cone.rotation.y = Math.random() * Math.PI;
+        cone.rotation.z = (Math.random() - 0.5) * 0.05; // Leve curvatura natural
+        tree.add(cone);
+      }
+
+      tree.position.set(x, y, z);
+      tree.scale.set(scale, scale, scale);
+      tree.userData = {
+        baseRotZ: (Math.random() - 0.5) * 0.04,
+        swayOffset: Math.random() * Math.PI * 2,
+        swaySpeed: 0.8 + Math.random() * 0.5,
+      };
+
+      forestGroup.add(tree);
+    }
+  }
+
+  /**
+   * Ramas y briznas colgantes en primer plano para enmarcar la vista
+   */
+  function buildForegroundCanopy() {
+    scene.add(canopyForeground);
+
+    const boughTexture = createOrganicSoftTexture('rgba(20, 42, 28, 0.95)', 256);
+    const boughMat = new THREE.MeshBasicMaterial({
+      map: boughTexture,
       transparent: true,
-      opacity: 0.12,
+      opacity: 0.6,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
       side: THREE.DoubleSide,
     });
 
-    const rayGeo = new THREE.PlaneGeometry(16, 120);
+    const boughGeo = new THREE.PlaneGeometry(35, 18);
 
-    for (let i = 0; i < 6; i++) {
+    // Rama superior izquierda
+    const boughLeft = new THREE.Mesh(boughGeo, boughMat);
+    boughLeft.position.set(-28, 24, 25);
+    boughLeft.rotation.z = -0.25;
+    canopyForeground.add(boughLeft);
+
+    // Rama superior derecha
+    const boughRight = new THREE.Mesh(boughGeo, boughMat);
+    boughRight.position.set(30, 25, 22);
+    boughRight.rotation.z = 0.3;
+    canopyForeground.add(boughRight);
+  }
+
+  /**
+   * Haces de luz solar suave (God Rays)
+   */
+  function buildVolumetricSunbeams() {
+    scene.add(lightRaysGroup);
+
+    const rayTex = createOrganicSoftTexture('rgba(245, 235, 210, 1)', 256);
+    const rayMat = new THREE.MeshBasicMaterial({
+      map: rayTex,
+      transparent: true,
+      opacity: 0.09,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+
+    const rayGeo = new THREE.PlaneGeometry(18, 140);
+
+    for (let i = 0; i < 5; i++) {
       const ray = new THREE.Mesh(rayGeo, rayMat);
-      ray.position.set(-80 + i * 32, 28, -80 + (i % 3) * 20);
-      ray.rotation.z = -0.42; // Inclinación natural de haz solar
-      ray.rotation.y = 0.18;
+      ray.position.set(-65 + i * 28, 30, -50 + (i % 3) * 15);
+      ray.rotation.z = -0.44;
+      ray.rotation.y = 0.15;
       ray.userData = {
-        baseOpacity: 0.07 + Math.random() * 0.08,
-        pulseSpeed: 0.6 + Math.random() * 0.8,
-        offset: Math.random() * Math.PI * 2,
+        baseOpacity: 0.06 + Math.random() * 0.05,
+        speed: 0.5 + Math.random() * 0.6,
+        phase: Math.random() * Math.PI * 2,
       };
       lightRaysGroup.add(ray);
     }
   }
 
   /**
-   * Planos horizontales de niebla volumétrica flotante
+   * Niebla de montaña y vapor forestal en múltiples estratos
    */
-  function buildVolumetricMist() {
+  function buildAtmosphericMist() {
     scene.add(mistGroup);
 
-    const mistTexture = createSoftRadialTexture('rgba(150, 185, 160, 1)', 256);
+    const mistTex = createOrganicSoftTexture('rgba(160, 185, 170, 1)', 256);
     const mistMat = new THREE.MeshBasicMaterial({
-      map: mistTexture,
+      map: mistTex,
       transparent: true,
-      opacity: 0.14,
+      opacity: 0.12,
       depthWrite: false,
-      blending: THREE.NormalBlending,
       side: THREE.DoubleSide,
     });
 
-    const mistGeo = new THREE.PlaneGeometry(140, 50);
+    const mistGeo = new THREE.PlaneGeometry(160, 55);
 
     for (let i = 0; i < config.mistLayerCount; i++) {
-      const mistPlane = new THREE.Mesh(mistGeo, mistMat);
-      mistPlane.position.set((Math.random() - 0.5) * 160, 2 + i * 3, -40 - i * 45);
-      mistPlane.rotation.x = 0;
-      mistPlane.userData = {
-        speed: 0.4 + i * 0.2,
-        startX: mistPlane.position.x,
+      const plane = new THREE.Mesh(mistGeo, mistMat);
+      plane.position.set((Math.random() - 0.5) * 140, 2 + i * 2.5, -30 - i * 35);
+      plane.userData = {
+        speed: 0.25 + i * 0.15,
       };
-      mistGroup.add(mistPlane);
+      mistGroup.add(plane);
     }
   }
 
   /**
-   * Luciérnagas y esporas bioluminiscentes en suspensión
+   * Luciérnagas doradas con brillo de respiración orgánico
    */
-  function buildBioluminescentSpores() {
+  function buildFireflies() {
     const geo = new THREE.BufferGeometry();
-    const positions = new Float32Array(config.sporeCount * 3);
-    const originalPositions = new Float32Array(config.sporeCount * 3);
-    const scales = new Float32Array(config.sporeCount);
-    const phases = new Float32Array(config.sporeCount);
+    const positions = new Float32Array(config.fireflyCount * 3);
+    const originPos = new Float32Array(config.fireflyCount * 3);
+    const phases = new Float32Array(config.fireflyCount);
 
-    for (let i = 0; i < config.sporeCount; i++) {
-      const x = (Math.random() - 0.5) * 160;
-      const y = Math.random() * 45 - 5;
-      const z = 20 - Math.random() * 140;
+    for (let i = 0; i < config.fireflyCount; i++) {
+      const x = (Math.random() - 0.5) * 140;
+      const y = Math.random() * 38 - 3;
+      const z = 22 - Math.random() * 115;
 
       positions[i * 3] = x;
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;
 
-      originalPositions[i * 3] = x;
-      originalPositions[i * 3 + 1] = y;
-      originalPositions[i * 3 + 2] = z;
+      originPos[i * 3] = x;
+      originPos[i * 3 + 1] = y;
+      originPos[i * 3 + 2] = z;
 
-      scales[i] = 1.0 + Math.random() * 2.2;
       phases[i] = Math.random() * Math.PI * 2;
     }
 
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.userData = { originalPositions, phases, scales };
+    geo.userData = { originPos, phases };
 
-    const sporeTex = createSoftRadialTexture('rgba(212, 185, 130, 1)', 64);
+    const fireflyTex = createOrganicSoftTexture('rgba(240, 210, 140, 1)', 64);
     const mat = new THREE.PointsMaterial({
-      map: sporeTex,
-      size: 3.2,
+      map: fireflyTex,
+      size: 3.6,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.8,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
-      color: 0x95d5b2,
+      color: 0xf5d996, // Luz dorada cálida natural
     });
 
-    sporesMesh = new THREE.Points(geo, mat);
-    scene.add(sporesMesh);
+    firefliesMesh = new THREE.Points(geo, mat);
+    scene.add(firefliesMesh);
   }
 
   /**
-   * Hojas de otoño y coníferas cayendo con física 3D
+   * Hojas de otoño naturales cayendo con aerodinámica real
    */
   function buildFallingLeaves() {
-    // Geometría curva tipo hoja
+    // Silueta de hoja orgánica con nervadura curva
     const leafShape = new THREE.Shape();
-    leafShape.moveTo(0, 0);
-    leafShape.quadraticCurveTo(0.9, 1.2, 0, 2.5);
-    leafShape.quadraticCurveTo(-0.9, 1.2, 0, 0);
+    leafShape.moveTo(0, -0.2);
+    leafShape.bezierCurveTo(0.8, 0.6, 1.0, 1.8, 0, 2.6);
+    leafShape.bezierCurveTo(-1.0, 1.8, -0.8, 0.6, 0, -0.2);
 
     const leafGeo = new THREE.ShapeGeometry(leafShape);
     leafGeo.center();
 
-    const leafColors = [0xc18c5d, 0x8a6240, 0x588157, 0xa3b18a, 0x344e41];
+    // Paleta botánica cálida (ámbar, ocre, musgo, cobre y salvia)
+    const rusticColors = [
+      0xc47e48, 0xa35a34, 0xd4a373, 0x606c38, 0x8a9e5b, 0x3b5335
+    ];
 
     for (let i = 0; i < config.leafCount; i++) {
-      const color = leafColors[i % leafColors.length];
+      const color = rusticColors[i % rusticColors.length];
       const mat = new THREE.MeshLambertMaterial({
         color: color,
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.9,
+        opacity: 0.92,
       });
 
       const leaf = new THREE.Mesh(leafGeo, mat);
@@ -306,8 +359,8 @@
 
   function resetLeaf(leaf, initial = false) {
     leaf.position.x = (Math.random() - 0.5) * 110;
-    leaf.position.y = initial ? Math.random() * 60 - 5 : 45 + Math.random() * 15;
-    leaf.position.z = 25 - Math.random() * 85;
+    leaf.position.y = initial ? Math.random() * 55 - 4 : 42 + Math.random() * 12;
+    leaf.position.z = 24 - Math.random() * 75;
 
     leaf.rotation.set(
       Math.random() * Math.PI * 2,
@@ -315,16 +368,16 @@
       Math.random() * Math.PI * 2
     );
 
-    const scale = 0.6 + Math.random() * 0.7;
+    const scale = 0.55 + Math.random() * 0.6;
     leaf.scale.set(scale, scale, scale);
 
     leaf.userData = {
-      fallSpeed: 0.08 + Math.random() * 0.07,
-      swaySpeed: 1.2 + Math.random() * 1.5,
-      rotSpeedX: (Math.random() - 0.5) * 0.04,
-      rotSpeedY: (Math.random() - 0.5) * 0.05,
-      rotSpeedZ: (Math.random() - 0.5) * 0.03,
-      swayAmp: 0.15 + Math.random() * 0.2,
+      fallSpeed: 0.065 + Math.random() * 0.055,
+      swayFreq: 1.1 + Math.random() * 1.3,
+      swayAmp: 0.12 + Math.random() * 0.18,
+      tumbleX: (Math.random() - 0.5) * 0.03,
+      tumbleY: (Math.random() - 0.5) * 0.04,
+      tumbleZ: (Math.random() - 0.5) * 0.025,
       phase: Math.random() * Math.PI * 2,
     };
   }
@@ -332,16 +385,16 @@
   function onMouseMove(e) {
     mouseX = (e.clientX / window.innerWidth) * 2 - 1;
     mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-    targetCamX = mouseX * 18;
-    targetCamY = 12 + mouseY * 8;
+    targetCamX = mouseX * 15;
+    targetCamY = 10 + mouseY * 6;
   }
 
   function onTouchMove(e) {
     if (e.touches.length > 0) {
       mouseX = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
       mouseY = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-      targetCamX = mouseX * 14;
-      targetCamY = 12 + mouseY * 6;
+      targetCamX = mouseX * 10;
+      targetCamY = 10 + mouseY * 5;
     }
   }
 
@@ -352,70 +405,75 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  /**
-   * Bucle principal de animación 60/120 FPS
-   */
   function animate() {
     requestAnimationFrame(animate);
 
     const time = clock.getElapsedTime();
-    const delta = clock.getDelta();
 
-    // Rampa suave de fuerza de viento
-    windStrength += (targetWindStrength - windStrength) * 0.04;
+    // Transición suave de la fuerza del viento
+    windStrength += (targetWindStrength - windStrength) * 0.035;
 
-    // Movimiento de cámara suave con amortiguación
-    camera.position.x += (targetCamX - camera.position.x) * 0.035;
-    camera.position.y += (targetCamY - camera.position.y) * 0.035;
-    camera.lookAt(0, 8, -60);
+    // Perspectiva de cámara con amortiguación natural
+    camera.position.x += (targetCamX - camera.position.x) * 0.03;
+    camera.position.y += (targetCamY - camera.position.y) * 0.03;
+    camera.lookAt(0, 7, -50);
 
-    // Animación de haces de luz crepusculares
-    lightRaysGroup.children.forEach((ray) => {
-      const u = ray.userData;
-      ray.material.opacity = u.baseOpacity + Math.sin(time * u.pulseSpeed + u.offset) * 0.04;
-      ray.position.x += Math.sin(time * 0.2 + u.offset) * 0.02 * windStrength;
+    // Balanceo suave del follaje en los árboles
+    forestGroup.children.forEach((tree) => {
+      const u = tree.userData;
+      tree.rotation.z = u.baseRotZ + Math.sin(time * u.swaySpeed + u.swayOffset) * 0.015 * windStrength;
     });
 
-    // Desplazamiento de niebla volumétrica
+    // Balanceo de ramas en primer plano
+    canopyForeground.children.forEach((bough, idx) => {
+      bough.position.y += Math.sin(time * 0.7 + idx) * 0.01;
+      bough.rotation.z += Math.cos(time * 0.5 + idx) * 0.001;
+    });
+
+    // Pulsación suave de los rayos solares
+    lightRaysGroup.children.forEach((ray) => {
+      const u = ray.userData;
+      ray.material.opacity = u.baseOpacity + Math.sin(time * u.speed + u.phase) * 0.03;
+    });
+
+    // Desplazamiento lento de la niebla
     mistGroup.children.forEach((mist) => {
-      mist.position.x += 0.04 * mist.userData.speed * windStrength;
-      if (mist.position.x > 120) {
-        mist.position.x = -120;
+      mist.position.x += 0.03 * mist.userData.speed * windStrength;
+      if (mist.position.x > 110) {
+        mist.position.x = -110;
       }
     });
 
-    // Suspensión y brillo de esporas bioluminiscentes
-    if (sporesMesh) {
-      const pos = sporesMesh.geometry.attributes.position.array;
-      const orig = sporesMesh.geometry.userData.originalPositions;
-      const phases = sporesMesh.geometry.userData.phases;
+    // Vuelo y brillo de luciérnagas
+    if (firefliesMesh) {
+      const pos = firefliesMesh.geometry.attributes.position.array;
+      const orig = firefliesMesh.geometry.userData.originPos;
+      const phases = firefliesMesh.geometry.userData.phases;
 
-      for (let i = 0; i < config.sporeCount; i++) {
+      for (let i = 0; i < config.fireflyCount; i++) {
         const idx = i * 3;
         const p = phases[i];
 
-        // Deriva orgánica con funciones senoidales
-        pos[idx] = orig[idx] + Math.sin(time * 0.6 + p) * 3.5;
-        pos[idx + 1] = orig[idx + 1] + Math.cos(time * 0.8 + p) * 2.2;
-        pos[idx + 2] = orig[idx + 2] + Math.sin(time * 0.4 + p * 1.5) * 2.0;
+        pos[idx] = orig[idx] + Math.sin(time * 0.5 + p) * 2.8;
+        pos[idx + 1] = orig[idx + 1] + Math.cos(time * 0.65 + p) * 1.8;
+        pos[idx + 2] = orig[idx + 2] + Math.sin(time * 0.35 + p * 1.2) * 1.5;
 
-        // Viento empuja sutilmente
-        pos[idx] += (windStrength - 1.0) * 0.3;
+        pos[idx] += (windStrength - 1.0) * 0.25;
       }
-      sporesMesh.geometry.attributes.position.needsUpdate = true;
+      firefliesMesh.geometry.attributes.position.needsUpdate = true;
     }
 
-    // Física de caída de hojas 3D
+    // Aerodinámica de hojas cayendo
     leaves.forEach((leaf) => {
       const u = leaf.userData;
 
-      leaf.position.y -= u.fallSpeed * (1 + (windStrength - 1.0) * 1.5);
-      leaf.position.x += (Math.sin(time * u.swaySpeed + u.phase) * u.swayAmp + (windStrength - 1.0) * 0.4);
-      leaf.position.z += Math.cos(time * u.swaySpeed * 0.7 + u.phase) * (u.swayAmp * 0.5);
+      leaf.position.y -= u.fallSpeed * (1 + (windStrength - 1.0) * 1.4);
+      leaf.position.x += Math.sin(time * u.swayFreq + u.phase) * u.swayAmp + (windStrength - 1.0) * 0.35;
+      leaf.position.z += Math.cos(time * u.swayFreq * 0.8 + u.phase) * (u.swayAmp * 0.45);
 
-      leaf.rotation.x += u.rotSpeedX * windStrength;
-      leaf.rotation.y += u.rotSpeedY * windStrength;
-      leaf.rotation.z += u.rotSpeedZ * windStrength;
+      leaf.rotation.x += u.tumbleX * windStrength;
+      leaf.rotation.y += u.tumbleY * windStrength;
+      leaf.rotation.z += u.tumbleZ * windStrength;
 
       if (leaf.position.y < -12) {
         resetLeaf(leaf, false);
@@ -425,9 +483,9 @@
     renderer.render(scene, camera);
   }
 
-  // API Pública para interacciones de la aplicación
+  // API para interacciones naturales
   window.ForestScene = {
-    triggerGust: function (strength = 2.4, duration = 3000) {
+    triggerGust: function (strength = 2.2, duration = 3000) {
       targetWindStrength = strength;
       setTimeout(() => {
         targetWindStrength = 1.0;
@@ -435,7 +493,6 @@
     },
   };
 
-  // Inicialización al cargar el DOM
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
