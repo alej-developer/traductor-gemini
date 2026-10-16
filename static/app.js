@@ -81,8 +81,8 @@ async function initApp() {
     if (typeof gsap !== 'undefined') {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
       tl.from('.app-header', { y: -25, opacity: 0, duration: 0.8 })
-        .from('.toolbar-card', { y: 20, opacity: 0, duration: 0.7 }, '-=0.4')
-        .from('.translation-grid', { y: 25, opacity: 0, duration: 0.8 }, '-=0.4');
+        .from('.workspace-toolbar', { y: 20, opacity: 0, duration: 0.7 }, '-=0.4')
+        .from('.unified-editor-deck', { y: 25, opacity: 0, duration: 0.8 }, '-=0.4');
     }
   } catch (err) {
     console.error('Error inicializando app:', err);
