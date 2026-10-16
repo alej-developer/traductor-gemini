@@ -1,36 +1,39 @@
 /* ==============================================================================
    Traductor Gemini Enterprise - Design System
-   Estética de alto rendimiento senior inspirada en la disciplina técnica,
-   la paleta orgánica de bosque profundo (abeto, pino alpino, salvia, corteza y piedra)
-   y el rigor atlético de marcas de ingeniería como Under Armour.
+   Estética de alto nivel inmersivo: Bosque profundo 3D, vidrio obsidiana esmerilado,
+   niebla volumétrica, haces de luz solares y tipografía de precisión atlética (Under Armour / One Page Love).
    ============================================================================== */
 
 :root {
-  /* Superficies y Fondos Orgánicos de Bosque Profundo */
-  --bg-app: #080D0A;
-  --bg-surface: #0E1612;
-  --bg-surface-elevated: #15201B;
-  --bg-surface-hover: #1C2B24;
-  --bg-input: #0B120E;
+  /* Coordenadas de Luz y Cursor para Spotlight Ambiental */
+  --mouse-x: 50vw;
+  --mouse-y: 50vh;
 
-  /* Bordes de Precisión Táctica (Agujas de Pino y Líquenes) */
-  --border-hairline: rgba(148, 175, 155, 0.12);
-  --border-subtle: rgba(148, 175, 155, 0.22);
-  --border-hover: rgba(148, 175, 155, 0.38);
+  /* Superficies y Fondos Orgánicos de Bosque Profundo */
+  --bg-app: #070C09;
+  --bg-surface: rgba(14, 22, 17, 0.78);
+  --bg-surface-elevated: rgba(22, 34, 27, 0.85);
+  --bg-surface-hover: rgba(30, 46, 36, 0.95);
+  --bg-input: rgba(10, 16, 12, 0.85);
+
+  /* Bordes de Precisión Táctica (Agujas de Pino, Líquenes y Vidrio) */
+  --border-hairline: rgba(148, 175, 155, 0.15);
+  --border-subtle: rgba(148, 175, 155, 0.26);
+  --border-hover: rgba(148, 175, 155, 0.45);
   --border-focus: #52B788;
 
   /* Tipografía y Escala de Grises Botánicos */
   --text-primary: #F0F5F1;
   --text-secondary: #98A79B;
   --text-muted: #5E7264;
-  --text-inverse: #080D0A;
+  --text-inverse: #070C09;
 
   /* Acentos de Bosque de Alto Rendimiento (Sin azul IA ni saturaciones neón) */
   --primary-accent: #234E35;
   --primary-accent-hover: #2D6343;
   --primary-accent-active: #1A3C29;
-  --accent-forest-subtle: rgba(45, 106, 79, 0.18);
-  --accent-forest-border: rgba(82, 183, 136, 0.3);
+  --accent-forest-subtle: rgba(45, 106, 79, 0.22);
+  --accent-forest-border: rgba(82, 183, 136, 0.35);
   --accent-forest-text: #74C69D;
   --accent-forest-light: #95D5B2;
   --accent-earth-bark: #D4A373;
@@ -39,7 +42,7 @@
   --accent-error: #E63946;
 
   /* Tipografías */
-  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Syne', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
@@ -50,11 +53,11 @@
   --radius-lg: 12px;
   --radius-full: 9999px;
 
-  /* Sombras Ópticas de Bosque (Densas y Naturales) */
-  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.35);
-  --shadow-card: 0 4px 18px -2px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.25);
-  --shadow-elevated: 0 14px 36px -4px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.35);
-  --shadow-drawer: -10px 0 36px rgba(0, 0, 0, 0.75);
+  /* Sombras Ópticas de Bosque y Vidrio */
+  --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 8px 24px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-elevated: 0 18px 48px -6px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --shadow-drawer: -12px 0 42px rgba(0, 0, 0, 0.85);
 
   /* Transiciones Profesionales (Resorte de Alto Rendimiento) */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -78,6 +81,44 @@ body {
   overflow-x: hidden;
   position: relative;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Lienzo Three.js de Fondo */
+.forest-webgl-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -3;
+  pointer-events: none;
+}
+
+/* Grano Cinematográfico de Película (SVG Noise Filter) */
+.film-grain {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Viñeta Óptica Natural */
+.vignette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(circle at center, transparent 35%, rgba(5, 9, 7, 0.8) 100%);
+}
+
+/* Foco de Iluminación Ambiental que sigue al cursor */
+.ambient-spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(700px circle at var(--mouse-x, 50vw) var(--mouse-y, 50vh), rgba(82, 183, 136, 0.07), transparent 75%);
 }
 
 /* Tipografía de Cabeceras con Estilo Deportivo / Técnico */
@@ -104,9 +145,11 @@ h1, h2, h3 {
   justify-content: space-between;
   align-items: center;
   padding: 1.15rem 2.5rem;
-  background: rgba(8, 13, 10, 0.9);
-  backdrop-filter: blur(16px);
+  background: rgba(7, 12, 9, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-hairline);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .brand-container {
@@ -116,8 +159,8 @@ h1, h2, h3 {
 }
 
 .logo-badge {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: var(--radius-sm);
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-subtle);
@@ -146,9 +189,10 @@ h1, h2, h3 {
 }
 
 .brand-subtitle {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
+  font-weight: 600;
   color: var(--text-muted);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
 }
 
 .header-actions {
@@ -157,17 +201,39 @@ h1, h2, h3 {
   gap: 0.75rem;
 }
 
+/* HUD de Telemetría Biológica */
+.hud-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(14, 22, 17, 0.75);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+.hud-label {
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.hud-value {
+  color: var(--accent-forest-text);
+  font-weight: 700;
+}
+
 /* Píldora de Estado del Motor */
 .status-pill {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 0.35rem 0.85rem;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-xs);
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   color: var(--text-secondary);
@@ -191,6 +257,13 @@ h1, h2, h3 {
   width: 7px;
   height: 7px;
   border-radius: 50%;
+}
+
+/* Conmutador de Sonido Ambiental */
+.sound-toggle-btn.active {
+  border-color: var(--accent-forest-text);
+  color: var(--accent-forest-light);
+  background: var(--accent-forest-subtle);
 }
 
 /* Botones de Estilo Atlético / Rendimiento */
@@ -234,12 +307,12 @@ h1, h2, h3 {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background: transparent;
+  background: rgba(14, 22, 17, 0.6);
   color: var(--text-secondary);
   border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   padding: 0.45rem 0.85rem;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -258,7 +331,7 @@ h1, h2, h3 {
 }
 
 .btn-sm {
-  padding: 0.4rem 0.85rem;
+  padding: 0.45rem 0.85rem;
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -338,11 +411,13 @@ h1, h2, h3 {
   justify-content: space-between;
   align-items: center;
   background: var(--bg-surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-md);
   padding: 0.75rem 1.25rem;
   margin-bottom: 1.25rem;
-  box-shadow: var(--shadow-subtle);
+  box-shadow: var(--shadow-card);
   transition: border-color var(--transition-fast);
 }
 .toolbar-card:hover {
@@ -358,9 +433,9 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-secondary);
 }
@@ -438,7 +513,7 @@ h1, h2, h3 {
   color: var(--text-primary);
 }
 
-/* Cuadrícula Dual de Traducción */
+/* Cuadrícula Dual de Traducción (Paneles de Vidrio Obsidiana) */
 .translation-grid {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -456,6 +531,8 @@ h1, h2, h3 {
   display: flex;
   flex-direction: column;
   background: var(--bg-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
@@ -476,7 +553,7 @@ h1, h2, h3 {
   align-items: center;
   padding: 0.85rem 1.25rem;
   border-bottom: 1px solid var(--border-hairline);
-  background: rgba(11, 18, 14, 0.7);
+  background: rgba(10, 16, 12, 0.6);
 }
 
 .header-action-group {
@@ -521,7 +598,7 @@ textarea#sourceTextInput::placeholder {
 }
 
 .target-body {
-  background: rgba(11, 18, 14, 0.35);
+  background: rgba(10, 16, 12, 0.35);
 }
 
 .placeholder-box {
@@ -549,15 +626,14 @@ textarea#sourceTextInput::placeholder {
   color: var(--text-primary);
   white-space: pre-wrap;
   word-break: break-word;
-  animation: fadeIn var(--transition-normal);
 }
 
 /* Estado de Carga */
 .loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(14, 22, 18, 0.92);
-  backdrop-filter: blur(4px);
+  background: rgba(10, 16, 12, 0.92);
+  backdrop-filter: blur(6px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -565,7 +641,6 @@ textarea#sourceTextInput::placeholder {
   gap: 0.85rem;
   border-radius: var(--radius-md);
   z-index: 10;
-  animation: fadeIn var(--transition-fast);
 }
 .spinner {
   width: 32px;
@@ -585,7 +660,7 @@ textarea#sourceTextInput::placeholder {
   align-items: center;
   padding: 0.75rem 1.25rem;
   border-top: 1px solid var(--border-hairline);
-  background: rgba(11, 18, 14, 0.5);
+  background: rgba(10, 16, 12, 0.45);
   font-size: 0.78rem;
 }
 
@@ -643,16 +718,12 @@ textarea#sourceTextInput::placeholder {
 .analysis-section {
   margin-top: 2rem;
   background: var(--bg-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-md);
   padding: 1.75rem;
   box-shadow: var(--shadow-card);
-  animation: fadeIn var(--transition-normal);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .section-title-bar {
@@ -710,7 +781,7 @@ textarea#sourceTextInput::placeholder {
 .vocab-card {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   padding: 1rem;
   box-shadow: var(--shadow-subtle);
   transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -738,7 +809,7 @@ textarea#sourceTextInput::placeholder {
   font-weight: 700;
   padding: 0.15rem 0.45rem;
   border-radius: var(--radius-xs);
-  background: rgba(148, 175, 155, 0.12);
+  background: rgba(148, 175, 155, 0.14);
   color: var(--text-secondary);
   border: 1px solid var(--border-hairline);
 }
@@ -779,7 +850,7 @@ textarea#sourceTextInput::placeholder {
 .grammar-card {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   padding: 1rem;
   transition: border-color var(--transition-fast);
 }
@@ -816,6 +887,8 @@ textarea#sourceTextInput::placeholder {
   max-width: 90vw;
   height: 100vh;
   background: var(--bg-surface);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
   border-left: 1px solid var(--border-hairline);
   box-shadow: var(--shadow-drawer);
   z-index: 100;
@@ -829,8 +902,8 @@ textarea#sourceTextInput::placeholder {
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
   z-index: 90;
   opacity: 0;
   pointer-events: none;
@@ -938,11 +1011,12 @@ textarea#sourceTextInput::placeholder {
   bottom: 2rem;
   right: 2rem;
   background: var(--bg-surface-elevated);
+  backdrop-filter: blur(16px);
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-elevated);
   padding: 0.75rem 1.25rem;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   font-size: 0.82rem;
   font-weight: 600;
   z-index: 150;
@@ -960,6 +1034,9 @@ textarea#sourceTextInput::placeholder {
 @media (max-width: 900px) {
   .app-header {
     padding: 1rem 1.25rem;
+  }
+  .hud-pill {
+    display: none;
   }
   .translation-grid {
     grid-template-columns: 1fr;
