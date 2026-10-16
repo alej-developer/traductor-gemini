@@ -1,0 +1,77 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-and-lint:
+    name: Lint & Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install Dependencies
+        run: uv sync
+
+      - name: Run Ruff Linter
+        run: uv run ruff check .
+
+      - name: Run Ruff Formatter Check
+        run: uv run ruff format --check .
+
+      - name: Run Mypy Typecheck
+        run: uv run mypy src
+
+  unit-and-integration-tests:
+    name: Tests & Coverage
+    runs-on: ubuntu-latest
+    needs: quality-and-lint
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install Dependencies
+        run: uv sync
+
+      - name: Run Pytest Suite with Coverage
+        run: uv run pytest --cov=src --cov-report=term-missing
+
+  docker-smoke-test:
+    name: Docker Build Validation
+    runs-on: ubuntu-latest
+    needs: quality-and-lint
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: traductor-gemini:test
