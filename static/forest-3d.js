@@ -90,12 +90,12 @@
   function buildVolumetricSunRays() {
     scene.add(sunRaysGroup);
 
-    const rayTex = createSoftTexture('rgba(255, 248, 220, 1)', 256);
+    const rayTex = createSoftTexture('rgba(240, 230, 210, 0.5)', 256);
     const rayMat = new THREE.MeshBasicMaterial({
       map: rayTex,
       transparent: true,
-      opacity: 0.08,
-      blending: THREE.AdditiveBlending,
+      opacity: 0.03,
+      blending: THREE.NormalBlending,
       depthWrite: false,
       side: THREE.DoubleSide,
     });
@@ -108,8 +108,8 @@
       ray.rotation.z = -0.48;
       ray.rotation.y = 0.12;
       ray.userData = {
-        baseOpacity: 0.05 + i * 0.015,
-        speed: 0.5 + Math.random() * 0.4,
+        baseOpacity: 0.02 + i * 0.008,
+        speed: 0.4 + Math.random() * 0.3,
         phase: Math.random() * Math.PI * 2,
       };
       sunRaysGroup.add(ray);
@@ -122,11 +122,11 @@
   function buildVolumetricMist() {
     scene.add(mistGroup);
 
-    const mistTex = createSoftTexture('rgba(190, 215, 200, 1)', 256);
+    const mistTex = createSoftTexture('rgba(180, 200, 190, 0.8)', 256);
     const mistMat = new THREE.MeshBasicMaterial({
       map: mistTex,
       transparent: true,
-      opacity: 0.09,
+      opacity: 0.07,
       depthWrite: false,
       side: THREE.DoubleSide,
     });
@@ -144,7 +144,7 @@
   }
 
   /**
-   * Luciérnagas doradas con pulsación natural
+   * Partículas orgánicas de bosque tenues (sin neón)
    */
   function buildFireflies() {
     const geo = new THREE.BufferGeometry();
@@ -171,15 +171,15 @@
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geo.userData = { originPos, phases };
 
-    const fireflyTex = createSoftTexture('rgba(255, 220, 150, 1)', 64);
+    const fireflyTex = createSoftTexture('rgba(215, 185, 140, 0.8)', 64);
     const mat = new THREE.PointsMaterial({
       map: fireflyTex,
-      size: 3.4,
+      size: 2.2,
       transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
+      opacity: 0.4,
+      blending: THREE.NormalBlending,
       depthWrite: false,
-      color: 0xfde047, // Tono luciérnaga dorada cálida
+      color: 0xc8aa82,
     });
 
     firefliesMesh = new THREE.Points(geo, mat);
